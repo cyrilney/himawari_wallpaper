@@ -78,9 +78,11 @@ class Himawari8:
            if 'hima' in l[0] and l[1] in ('.jpg','.png','.JPG','.PNG','.bmp'):
                os.remove(filename)
 
-if __name__ == '__main__':
+def job():
     hima = Himawari8()
-    schedule.every(10).minutes.do(hima.work)
+    hima.work()
+
+if __name__ == '__main__':
     while True:
-        schedule.run_pending()
-        time.sleep(60)
+        job()
+        time.sleep(600)
