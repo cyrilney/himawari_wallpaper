@@ -5,6 +5,7 @@ import os
 from wallpaper import Win32WallPaperSetter
 import PIL.Image as Image
 import schedule
+import time
 
 
 class Himawari8:
@@ -80,3 +81,6 @@ class Himawari8:
 if __name__ == '__main__':
     hima = Himawari8()
     schedule.every(10).minutes.do(hima.work)
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
