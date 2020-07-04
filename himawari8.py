@@ -45,6 +45,7 @@ class Himawari8:
 
     def work(self):
 
+        RETRY = 3
         # http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/06/18/085000_0_0.png
         URL_PREFIX = 'http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/%s_%d_%d.png'
         DOWNLOAD_FILE_PREFIX = 'himawari8_earch_%s_%d_%d.png'
@@ -59,15 +60,20 @@ class Himawari8:
             for col in range(0, 4):
                 url = (URL_PREFIX %(str(querystr), row, col))
                 filename = os.path.join(PATH ,(DOWNLOAD_FILE_PREFIX %(querystr[-6:], row, col)))
-                try:
-                    self.getImg(url,filename)
-                    imagefiles[row].append(filename)
-                except Exception as err:
-                    print("download " + filename + " error:")
-                    print(err)
+
+                try_cnt = 0
+                while try_cnt < RETRY:
+                    try:
+                        self.getImg(url,filename)
+                        imagefiles[row].append(filename)
+                    except Exception as err:
+                        print("download " + filename + " error:")
+                        print(err)
+                        try_cnt += 1
+                        continue
+                    break
 
         # 合并图像
-
         savename = os.path.join(PATH, ('himawari8_earch_big_%s.png' % querystr[-6:]))
         if self.mergeImg(imagefiles, savename):
             wallPaserSetter = Win32WallPaperSetter()
