@@ -4,6 +4,7 @@ import datetime
 import os
 from wallpaper import Win32WallPaperSetter
 import PIL.Image as Image
+import schedule
 
 
 class Himawari8:
@@ -70,7 +71,7 @@ class Himawari8:
         if self.mergeImg(imagefiles, savename):
             wallPaserSetter = Win32WallPaperSetter()
             wallPaserSetter.setWallPaperBMP(savename)
-        
+
         for filename in os.listdir():
            l = os.path.splitext(filename)
            if 'hima' in l[0] and l[1] in ('.jpg','.png','.JPG','.PNG','.bmp'):
@@ -78,4 +79,4 @@ class Himawari8:
 
 if __name__ == '__main__':
     hima = Himawari8()
-    hima.work()
+    schedule.every(10).minutes.do(hima.work)
