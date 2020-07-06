@@ -15,7 +15,7 @@ class Himawari8:
         try:
             print("begin to download url: %s, filename: %s" %(url, filename))
             request = urllib.request.Request(url)
-            response = urllib.request.urlopen(request, timeout=60)
+            response = urllib.request.urlopen(request, timeout=20)
             img = response.read()
             fp.write(img)
             print("download file %s" %filename)
