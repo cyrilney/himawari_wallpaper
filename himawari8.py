@@ -1,5 +1,6 @@
 import urllib
 import urllib.request
+import ssl
 import datetime
 import os
 from wallpaper import Win32WallPaperSetter
@@ -14,8 +15,9 @@ class Himawari8:
         fp = open(filename, 'wb')
         try:
             print("begin to download url: %s, filename: %s" %(url, filename))
+            context = ssl._create_unverified_context()
             request = urllib.request.Request(url)
-            response = urllib.request.urlopen(request, timeout=20)
+            response = urllib.request.urlopen(request, timeout=20, context=context)
             img = response.read()
             fp.write(img)
             print("download file %s" %filename)
@@ -46,11 +48,14 @@ class Himawari8:
     def work(self):
 
         RETRY = 3
-        # http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/06/18/085000_0_0.png
-        URL_PREFIX = 'http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/%s_%d_%d.png'
+
+        # 'http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/10/14/065000_3_0.png'
+        #  http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/10/14/070000_2_0.png
+        # 'http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/10/14/070000_0_0.png'
+        URL_PREFIX = 'https://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/%s_%d_%d.png'
         DOWNLOAD_FILE_PREFIX = 'himawari8_earch_%s_%d_%d.png'
         PATH = os.getcwd()
-        querytime = datetime.datetime.now() - datetime.timedelta(hours=8,minutes=30)
+        querytime = datetime.datetime.now() - datetime.timedelta(hours=8,minutes=20)
         querytime = datetime.datetime(year=querytime.year, month=querytime.month, day=querytime.day, hour=querytime.hour, minute=int(querytime.minute/10)*10, second=0)
         querystr = querytime.strftime('%Y/%m/%d/%H%M%S')
 
@@ -76,6 +81,7 @@ class Himawari8:
         # 合并图像
         savename = os.path.join(PATH, ('himawari8_earch_big_%s.png' % querystr[-6:]))
         if self.mergeImg(imagefiles, savename):
+            # pass
             wallPaserSetter = Win32WallPaperSetter()
             wallPaserSetter.setWallPaperBMP(savename)
 
