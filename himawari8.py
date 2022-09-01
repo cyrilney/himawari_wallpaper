@@ -5,13 +5,21 @@ import datetime
 import os
 from wallpaper import Win32WallPaperSetter
 import PIL.Image as Image
-import schedule
-import time
+from threading import Timer
 
 
-class Himawari8:
+class Himawari8(object):
 
-    def getImg(self, url, filename):
+    def __init__(self):
+        self.scheduler = Timer(600, self.work())
+
+    def start(self):
+        self.scheduler.start()
+
+    def stop(self):
+        self.scheduler.stop()
+
+    def _getImg(self, url, filename):
         fp = open(filename, 'wb')
         try:
             print("begin to download url: %s, filename: %s" %(url, filename))
@@ -27,7 +35,7 @@ class Himawari8:
         finally:
             fp.close()
 
-    def mergeImg(self, imagefiles, saveName):
+    def _mergeImg(self, imagefiles, saveName):
         IMAGE_SIZE = 550
         print('save image begin...')
         if len(imagefiles) != 4 or len(imagefiles[0]) != 4 or len(imagefiles[1]) != 4 or len(imagefiles[2]) != 4 or len(imagefiles[3]) != 4:
@@ -69,7 +77,7 @@ class Himawari8:
                 try_cnt = 0
                 while try_cnt < RETRY:
                     try:
-                        self.getImg(url,filename)
+                        self._getImg(url,filename)
                         imagefiles[row].append(filename)
                     except Exception as err:
                         print("download " + filename + " error:")
@@ -80,7 +88,7 @@ class Himawari8:
 
         # 合并图像
         savename = os.path.join(PATH, ('himawari8_earch_big_%s.png' % querystr[-6:]))
-        if self.mergeImg(imagefiles, savename):
+        if self._mergeImg(imagefiles, savename):
             # pass
             wallPaserSetter = Win32WallPaperSetter()
             wallPaserSetter.setWallPaperBMP(savename)
@@ -89,12 +97,3 @@ class Himawari8:
            l = os.path.splitext(filename)
            if 'hima' in l[0] and l[1] in ('.jpg','.png','.JPG','.PNG','.bmp'):
                os.remove(filename)
-
-def job():
-    hima = Himawari8()
-    hima.work()
-
-if __name__ == '__main__':
-    while True:
-        job()
-        time.sleep(600)
