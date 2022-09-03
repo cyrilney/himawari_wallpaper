@@ -38,15 +38,7 @@ def flush(button,data):
 
 
 
-
-
-
-
 def main():
-
-    # 重定向输出流  日志文件化
-    fp = open("print.log", "w+")
-    sys.stdout = fp
 
     root = tkinter.Tk()
     frame = ttk.Frame(root, padding=20)

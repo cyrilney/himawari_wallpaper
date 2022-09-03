@@ -11,13 +11,13 @@ from threading import Timer
 class Himawari8(object):
 
     def __init__(self):
-        self.scheduler = Timer(600, self.work())
+        self.scheduler = Timer(600, self.work)
 
     def start(self):
         self.scheduler.start()
 
     def stop(self):
-        self.scheduler.stop()
+        self.scheduler.cancel()
 
     def _getImg(self, url, filename):
         fp = open(filename, 'wb')
