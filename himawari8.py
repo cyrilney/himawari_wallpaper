@@ -5,19 +5,23 @@ import datetime
 import os
 from wallpaper import Win32WallPaperSetter
 import PIL.Image as Image
-from threading import Timer
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class Himawari8(object):
 
     def __init__(self):
-        self.scheduler = Timer(600, self.work)
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.add_job(self.work, 'interval', minutes=10)
+        # 启动后暂停 方便之后开启
+        self.scheduler.start()
+        self.scheduler.pause()
 
     def start(self):
-        self.scheduler.start()
+        self.scheduler.resume()
 
     def stop(self):
-        self.scheduler.cancel()
+        self.scheduler.pause()
 
     def _getImg(self, url, filename):
         fp = open(filename, 'wb')
