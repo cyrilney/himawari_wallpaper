@@ -3,9 +3,9 @@
 
 #### 导包
 
-pillow 用于图像处理， 定时任务schedule，win炒作库pywin32
+pillow 用于图像处理， 定时任务apscheduler，win操作库pywin32
 
-        pip3 install pillow schedule pywin32
+        pip3 install pillow pywin32 apscheduler
 
 #### 修改历史
 
