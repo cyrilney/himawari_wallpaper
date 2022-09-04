@@ -55,9 +55,9 @@ def flush(button, data):
 
 def main():
     root = tkinter.Tk()
-    root.geometry('130x100')
+
     root.resizable(width=0, height=0)
-    frame = ttk.Frame(root, padding=20)
+    frame = ttk.Frame(root, padding=50)
     frame.grid()
     data = Data()
 
