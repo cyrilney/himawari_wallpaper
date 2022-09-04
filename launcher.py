@@ -84,6 +84,7 @@ def main():
     def on_exit():
         root.withdraw()
 
+    window.protocol('WM_DELETE_WINDOW',on_exit)
     menu = (MenuItem('显示', show_window, default=True), Menu.SEPARATOR, MenuItem('退出', quit_window))
     image = Image.open("static/earth.png")
     icon = pystray.Icon("icon", image, "图标名称", menu)
