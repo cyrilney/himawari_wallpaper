@@ -2,6 +2,7 @@ import tkinter
 from tkinter import ttk
 from tkinter import messagebox
 from himawari8 import Himawari8
+from concurrent.futures import ThreadPoolExecutor
 
 class Data(object):
     def __init__(self):
@@ -29,17 +30,30 @@ def start(data):
 def stop(data):
     data.service.stop()
 
-def flush(button,data):
+# 另开一个线程防止主线程太长
+class ResultHandler:
+
+    def __init__(self, button):
+        self.btn = button
+
+    def handler(self, result):
+        self.btn['text'] = '更新桌面'
+        self.btn['state'] = 'normal'
+        messagebox.showinfo("成功！", "桌面更新完成！")
+
+def work(data):
+    print('start flush desktop')
+    # data.service.work()
+
+def flush(button, data):
     button['text'] = '处理中...'
     button['state'] = 'disabled'
-    data.service.work()
-    button['text'] = '更新桌面'
-    button['state'] = 'normal'
-
-
+    handler = ResultHandler(button)
+    pool = ThreadPoolExecutor(max_workers=1)
+    future1 = pool.submit(work, data)
+    future1.add_done_callback(ResultHandler(button).handler)
 
 def main():
-
     root = tkinter.Tk()
     frame = ttk.Frame(root, padding=20)
     frame.grid()
@@ -57,7 +71,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-def message(title, info):
-    messagebox.showinfo(title, info)
