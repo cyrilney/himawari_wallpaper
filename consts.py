@@ -13,4 +13,4 @@ class HimawariPreference: # 向日葵八号相关配置
     # 文件目录， url格式 'http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/10/14/065000_3_0.png'
     URL_PREFIX = 'https://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/%s_%d_%d.png'
     DOWNLOAD_FILE_PREFIX = 'himawari8_earch_%s_%d_%d.png'
-    SAVE_NAME_PREFIX 'himawari8_earch_big_%s.png'
+    SAVE_NAME_PREFIX = 'himawari8_earch_big_%s.png'
