@@ -6,13 +6,14 @@ import os
 from wallpaper import Win32WallPaperSetter
 import PIL.Image as Image
 from apscheduler.schedulers.background import BackgroundScheduler
+from consts import HimawariPreference as Preference
 
 
 class Himawari8(object):
 
     def __init__(self):
         self.scheduler = BackgroundScheduler()
-        self.scheduler.add_job(self.work, 'interval', minutes=10)
+        self.scheduler.add_job(self.work, 'interval', minutes=Preference.HIMA_REFLUSH_INTERVAL_MINUTES)
         # 启动后暂停 方便之后开启
         self.scheduler.start()
         self.scheduler.pause()
@@ -59,13 +60,6 @@ class Himawari8(object):
 
     def work(self):
 
-        RETRY = 3
-
-        # 'http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/10/14/065000_3_0.png'
-        #  http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/10/14/070000_2_0.png
-        # 'http://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/2020/10/14/070000_0_0.png'
-        URL_PREFIX = 'https://himawari8-dl.nict.go.jp/himawari8/img/D531106/4d/550/%s_%d_%d.png'
-        DOWNLOAD_FILE_PREFIX = 'himawari8_earch_%s_%d_%d.png'
         PATH = os.getcwd()
         querytime = datetime.datetime.now() - datetime.timedelta(hours=8,minutes=20)
         querytime = datetime.datetime(year=querytime.year, month=querytime.month, day=querytime.day, hour=querytime.hour, minute=int(querytime.minute/10)*10, second=0)
@@ -75,11 +69,11 @@ class Himawari8(object):
         imagefiles = [[],[],[],[]]
         for row in range(0, 4):
             for col in range(0, 4):
-                url = (URL_PREFIX %(str(querystr), row, col))
-                filename = os.path.join(PATH ,(DOWNLOAD_FILE_PREFIX %(querystr[-6:], row, col)))
+                url = (Preference.URL_PREFIX %(str(querystr), row, col))
+                filename = os.path.join(PATH ,(Preference.DOWNLOAD_FILE_PREFIX %(querystr[-6:], row, col)))
 
                 try_cnt = 0
-                while try_cnt < RETRY:
+                while try_cnt < Preference.WGET_IMAGE_RETRY:
                     try:
                         self._getImg(url,filename)
                         imagefiles[row].append(filename)
@@ -91,7 +85,7 @@ class Himawari8(object):
                     break
 
         # 合并图像
-        savename = os.path.join(PATH, ('himawari8_earch_big_%s.png' % querystr[-6:]))
+        savename = os.path.join(PATH, (Preference.SAVE_NAME_PREFIX % querystr[-6:]))
         if self._mergeImg(imagefiles, savename):
             # pass
             wallPaserSetter = Win32WallPaperSetter()
