@@ -3,6 +3,7 @@ import urllib
 import urllib.request
 import ssl
 import datetime
+import time
 import os
 from wallpaper import Win32WallPaperSetter
 import PIL.Image as Image
@@ -88,9 +89,10 @@ class Himawari8(object):
         # 合并图像
         savename = os.path.join(PATH, (Preference.SAVE_NAME_PREFIX % querystr[-6:]))
         if self._mergeImg(imagefiles, savename):
-
             wallPaserSetter = self.getWallPaperSetterByOs()
             wallPaserSetter.setWallPaper(savename)
+
+        time.sleep(10)  # 等待10s保证 文件存在
 
         for filename in os.listdir():
            l = os.path.splitext(filename)
@@ -98,7 +100,7 @@ class Himawari8(object):
                os.remove(filename)
 
 
-    def getWallPaperSetterByOs(self):
+    def getWallPaperSetterByOs(self):  # 目前只支持 MacOs 和 Windows系统
         if sys.platform == 'darwin':
             from wallpaper import MacOsWallPaperSetter
             return MacOsWallPaperSetter()
