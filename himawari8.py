@@ -1,3 +1,4 @@
+import sys
 import urllib
 import urllib.request
 import ssl
@@ -87,11 +88,20 @@ class Himawari8(object):
         # 合并图像
         savename = os.path.join(PATH, (Preference.SAVE_NAME_PREFIX % querystr[-6:]))
         if self._mergeImg(imagefiles, savename):
-            # pass
-            wallPaserSetter = Win32WallPaperSetter()
-            wallPaserSetter.setWallPaperBMP(savename)
+
+            wallPaserSetter = self.getWallPaperSetterByOs()
+            wallPaserSetter.setWallPaper(savename)
 
         for filename in os.listdir():
            l = os.path.splitext(filename)
            if 'hima' in l[0] and l[1] in ('.jpg','.png','.JPG','.PNG','.bmp'):
                os.remove(filename)
+
+
+    def getWallPaperSetterByOs(self):
+        if sys.platform == 'darwin':
+            from wallpaper import MacOsWallPaperSetter
+            return MacOsWallPaperSetter()
+        else:
+            from wallpaper import Win32WallPaperSetter
+            return Win32WallPaperSetter()
