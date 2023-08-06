@@ -10,6 +10,9 @@ import PIL.Image as Image
 from apscheduler.schedulers.background import BackgroundScheduler
 from consts import HimawariPreference as Preference
 
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
 
 class Himawari8(object):
 
@@ -29,24 +32,24 @@ class Himawari8(object):
     def _getImg(self, url, filename):
         fp = open(filename, 'wb')
         try:
-            print("begin to download url: %s, filename: %s" %(url, filename))
+            logging.info("begin to download url: %s, filename: %s",url, filename)
             context = ssl._create_unverified_context()
             request = urllib.request.Request(url)
             response = urllib.request.urlopen(request, timeout=20, context=context)
             img = response.read()
             fp.write(img)
-            print("download file %s" %filename)
+            logging.info("download file %s", filename)
         except:
-            print('download filename %s error!' %filename)
+            logging.info('download filename %s error!', filename)
             raise
         finally:
             fp.close()
 
     def _mergeImg(self, imagefiles, saveName):
         IMAGE_SIZE = 550
-        print('save image begin...')
+        logging.info('save image begin...')
         if len(imagefiles) != 4 or len(imagefiles[0]) != 4 or len(imagefiles[1]) != 4 or len(imagefiles[2]) != 4 or len(imagefiles[3]) != 4:
-            print('error save error. image not enough.')
+            logging.info('error save error. image not enough.')
             return 0
 
         to_image = Image.new('RGB', (4 * IMAGE_SIZE, 4 * IMAGE_SIZE)) #创建一个新图
@@ -57,7 +60,7 @@ class Himawari8(object):
                 to_image.paste(from_image, (row * IMAGE_SIZE, col * IMAGE_SIZE))
         # 保存图片
         to_image.save(saveName)
-        print('save image end.')
+        logging.info('save image end.')
         return 1
 
     def work(self):
@@ -80,8 +83,8 @@ class Himawari8(object):
                         self._getImg(url,filename)
                         imagefiles[row].append(filename)
                     except Exception as err:
-                        print("download " + filename + " error:")
-                        print(err)
+                        logging.info("download %s error:", filename)
+                        logging.error(err)
                         try_cnt += 1
                         continue
                     break

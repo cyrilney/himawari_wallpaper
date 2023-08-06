@@ -8,6 +8,10 @@ from consts import LaucherConsts
 import pystray
 from PIL import Image
 from pystray import MenuItem, Menu
+import logging
+
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
 
 class Data(object):
     def __init__(self):
@@ -47,7 +51,7 @@ class ResultHandler:
         messagebox.showinfo("成功！", LaucherConsts.LAUCHER_REFLUSH_SUCCESS_MESSAGE)
 
 def work(data):
-    print('start flush desktop')
+    logging.info('start flush desktop')
     data.service.work()
 
 # 刷新事件方法
